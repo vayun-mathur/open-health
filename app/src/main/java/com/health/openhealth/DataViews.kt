@@ -1,5 +1,6 @@
 package com.health.openhealth
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,21 +80,37 @@ import kotlin.reflect.KClass
 val TIME_ZONE: ZoneOffset = ZoneOffset.ofHours(-8)
 
 @Composable
-fun RecordView(name: String, endTime: Instant?, getLastString: AnnotatedString.Builder.(SpanStyle, SpanStyle) -> Unit) {
+fun RecordView(
+    name: String,
+    endTime: Instant?,
+    getLastString: AnnotatedString.Builder.(SpanStyle, SpanStyle) -> Unit
+) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(24.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(name, fontWeight = FontWeight.Bold)
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if(endTime != null)
-                        Text(LocalDateTime.ofInstant(endTime, TIME_ZONE)!!.toRecentTimeString())
+                    if (endTime != null) Text(
+                        LocalDateTime.ofInstant(endTime, TIME_ZONE)!!.toRecentTimeString()
+                    )
                     Spacer(Modifier.width(8.dp))
-                    Icon(painterResource(R.drawable.baseline_arrow_forward_24), null, Modifier.size(16.dp))
+                    Icon(
+                        painterResource(R.drawable.baseline_arrow_forward_24),
+                        null,
+                        Modifier.size(16.dp)
+                    )
                 }
             }
             Spacer(Modifier.height(16.dp))
-            if(endTime != null) {
-                Text(AnnotatedString.Builder().apply{getLastString(MaterialTheme.typography.headlineMedium.toSpanStyle(), MaterialTheme.typography.bodyLarge.toSpanStyle())}.toAnnotatedString())
+            if (endTime != null) {
+                Text(
+                    AnnotatedString.Builder().apply {
+                        getLastString(
+                            MaterialTheme.typography.headlineMedium.toSpanStyle(),
+                            MaterialTheme.typography.bodyLarge.toSpanStyle()
+                        )
+                    }.toAnnotatedString()
+                )
             } else {
                 Text("No data", style = MaterialTheme.typography.headlineMedium)
             }
@@ -103,101 +120,137 @@ fun RecordView(name: String, endTime: Instant?, getLastString: AnnotatedString.B
 
 private fun LocalDateTime.toRecentTimeString(): String {
     // if more than a year ago
-    if(this.isBefore(LocalDateTime.now().minusYears(1)))
-        return this.format(DateTimeFormatter.ofPattern("MM dd, yyyy"))
+    if (this.isBefore(
+            LocalDateTime.now().minusYears(1)
+        )
+    ) return this.format(DateTimeFormatter.ofPattern("MM dd, yyyy"))
     // if more than 2 days ago
-    if(this.isBefore(LocalDateTime.now().minusDays(2)))
-        return this.format(DateTimeFormatter.ofPattern("MMM dd"))
+    if (this.isBefore(
+            LocalDateTime.now().minusDays(2)
+        )
+    ) return this.format(DateTimeFormatter.ofPattern("MMM dd"))
     // if more than 1 day ago
-    if(this.isBefore(LocalDateTime.now().minusDays(1)))
-        return "Yesterday"
+    if (this.isBefore(LocalDateTime.now().minusDays(1))) return "Yesterday"
 
     return this.format(DateTimeFormatter.ofPattern("HH:mm"))
 }
 
 @Composable
-fun HeartRateViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Heart Rate", "bpm", HeartRateRecord::class)
+fun HeartRateViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Heart Rate", "bpm", HeartRateRecord::class)
 
 @Composable
-fun StepsViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Steps", "steps", StepsRecord::class)
+fun StepsViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Steps", "steps", StepsRecord::class)
 
 @Composable
-fun ActiveCaloriesBurnedViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Active Calories Burned", "kcal", ActiveCaloriesBurnedRecord::class)
+fun ActiveCaloriesBurnedViewData(appDatabase: AppDatabase) = BasicRecordViewData(
+    appDatabase, "Active Calories Burned", "kcal", ActiveCaloriesBurnedRecord::class
+)
 
 @Composable
-fun BasalBodyTemperatureViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Basal Body Temperature", "C", BasalBodyTemperatureRecord::class)
+fun BasalBodyTemperatureViewData(appDatabase: AppDatabase) = BasicRecordViewData(
+    appDatabase, "Basal Body Temperature", "C", BasalBodyTemperatureRecord::class
+)
 
 @Composable
-fun BasalMetabolicRateViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Basal Metabolic Rate", "kcal/h", BasalMetabolicRateRecord::class)
+fun BasalMetabolicRateViewData(appDatabase: AppDatabase) = BasicRecordViewData(
+    appDatabase, "Basal Metabolic Rate", "kcal/h", BasalMetabolicRateRecord::class
+)
 
 @Composable
-fun BloodGlucoseViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Blood Glucose", "mg/dL", BloodGlucoseRecord::class)
+fun BloodGlucoseViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Blood Glucose", "mg/dL", BloodGlucoseRecord::class)
 
 @Composable
-fun BloodPressureViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Blood Pressure", "mmHg", BloodPressureRecord::class)
+fun BloodPressureViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Blood Pressure", "mmHg", BloodPressureRecord::class)
 
 @Composable
-fun BodyFatViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Body Fat", "%", BodyFatRecord::class)
+fun BodyFatViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Body Fat", "%", BodyFatRecord::class)
 
 @Composable
-fun BodyTemperatureViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Body Temperature", "C", BodyTemperatureRecord::class)
+fun BodyTemperatureViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Body Temperature", "C", BodyTemperatureRecord::class)
 
 @Composable
-fun BodyWaterMassViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Body Water Mass", "g", BodyWaterMassRecord::class)
+fun BodyWaterMassViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Body Water Mass", "g", BodyWaterMassRecord::class)
 
 @Composable
-fun BoneMassViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Bone Mass", "g", BoneMassRecord::class)
+fun BoneMassViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Bone Mass", "g", BoneMassRecord::class)
 
 @Composable
-fun DistanceViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Distance", "m", DistanceRecord::class)
+fun DistanceViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Distance", "m", DistanceRecord::class)
 
 @Composable
-fun ElevationGainViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Elevation Gain", "m", ElevationGainedRecord::class)
+fun ElevationGainViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Elevation Gain", "m", ElevationGainedRecord::class)
 
 @Composable
-fun FloorsClimbedViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Floors Climbed", "steps", FloorsClimbedRecord::class)
+fun FloorsClimbedViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Floors Climbed", "steps", FloorsClimbedRecord::class)
 
 @Composable
-fun HeartRateVariabilityViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Heart Rate Variability", "bpm", HeartRateVariabilityRmssdRecord::class)
+fun HeartRateVariabilityViewData(appDatabase: AppDatabase) = BasicRecordViewData(
+    appDatabase, "Heart Rate Variability", "bpm", HeartRateVariabilityRmssdRecord::class
+)
 
 @Composable
-fun HeightViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Height", "cm", HeightRecord::class)
+fun HeightViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Height", "cm", HeightRecord::class)
 
 @Composable
-fun HydrationViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Hydration", "mL", HydrationRecord::class)
+fun HydrationViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Hydration", "mL", HydrationRecord::class)
 
 @Composable
-fun LeanBodyMassViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Lean Body Mass", "g", LeanBodyMassRecord::class)
+fun LeanBodyMassViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Lean Body Mass", "g", LeanBodyMassRecord::class)
 
 @Composable
-fun MenstruationPeriodViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Menstruation Period", "days", MenstruationPeriodRecord::class)
+fun MenstruationPeriodViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Menstruation Period", "days", MenstruationPeriodRecord::class)
 
 @Composable
-fun OxygenSaturationViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Oxygen Saturation", "%", OxygenSaturationRecord::class)
+fun OxygenSaturationViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Oxygen Saturation", "%", OxygenSaturationRecord::class)
 
 @Composable
-fun PowerViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Power", "W", PowerRecord::class)
+fun PowerViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Power", "W", PowerRecord::class)
 
 @Composable
-fun RespiratoryRateViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Respiratory Rate", "bpm", RespiratoryRateRecord::class)
+fun RespiratoryRateViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Respiratory Rate", "bpm", RespiratoryRateRecord::class)
 
 @Composable
-fun RestingHeartRateViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Resting Heart Rate", "bpm", RestingHeartRateRecord::class)
+fun RestingHeartRateViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Resting Heart Rate", "bpm", RestingHeartRateRecord::class)
 
 @Composable
-fun SpeedViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Speed", "m/s", SpeedRecord::class)
+fun SpeedViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Speed", "m/s", SpeedRecord::class)
 
 @Composable
-fun TotalCaloriesBurnedViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Total Calories Burned", "kcal", TotalCaloriesBurnedRecord::class)
+fun TotalCaloriesBurnedViewData(appDatabase: AppDatabase) = BasicRecordViewData(
+    appDatabase, "Total Calories Burned", "kcal", TotalCaloriesBurnedRecord::class
+)
 
 @Composable
-fun VO2MaxViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "VO2 Max", "L/kg/min", Vo2MaxRecord::class)
+fun VO2MaxViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "VO2 Max", "L/kg/min", Vo2MaxRecord::class)
 
 @Composable
-fun WheelchairPushesViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Wheelchair Pushes", "steps", WheelchairPushesRecord::class)
+fun WheelchairPushesViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Wheelchair Pushes", "steps", WheelchairPushesRecord::class)
 
 @Composable
-fun WeightViewData(appDatabase: AppDatabase) = BasicRecordViewData(appDatabase, "Weight", "kg", WeightRecord::class)
+fun WeightViewData(appDatabase: AppDatabase) =
+    BasicRecordViewData(appDatabase, "Weight", "kg", WeightRecord::class)
 
 @Composable
 fun BasicRecordView(name: String, unit: String, value: String?, lastTime: Instant?) {
@@ -211,111 +264,105 @@ fun BasicRecordView(name: String, unit: String, value: String?, lastTime: Instan
     }
 }
 
+@Composable
+fun CategoryRecordView(name: String, value: String?, lastTime: Instant?) {
+    RecordView(name, lastTime) { large, _ ->
+        withStyle(large) {
+            append(value)
+        }
+    }
+}
+
 fun getValueAndTime(record: Record): Pair<String?, Instant?> {
-    when(record) {
-        is HeartRateRecord ->
-            return Pair(record.samples.last().beatsPerMinute.toString(), record.samples.last().time)
+    when (record) {
+        is HeartRateRecord -> return Pair(
+            record.samples.last().beatsPerMinute.toString(), record.samples.last().time
+        )
 
-        is StepsRecord ->
-            return Pair(record.count.toString(), record.endTime)
+        is StepsRecord -> return Pair(record.count.toString(), record.endTime)
 
-        is ActiveCaloriesBurnedRecord ->
-            return Pair(record.energy.inKilocalories.toString(), record.endTime)
+        is ActiveCaloriesBurnedRecord -> return Pair(
+            record.energy.inKilocalories.toString(), record.endTime
+        )
 
-        is BasalBodyTemperatureRecord ->
-            return Pair(record.temperature.inCelsius.toString(), record.time)
+        is BasalBodyTemperatureRecord -> return Pair(
+            record.temperature.inCelsius.toString(), record.time
+        )
 
-        is BasalMetabolicRateRecord ->
-            return Pair(record.basalMetabolicRate.inKilocaloriesPerDay.toString(), record.time)
+        is BasalMetabolicRateRecord -> return Pair(
+            record.basalMetabolicRate.inKilocaloriesPerDay.toString(), record.time
+        )
 
-        is BloodGlucoseRecord ->
-            return Pair(record.level.inMilligramsPerDeciliter.toString(), record.time)
+        is BloodGlucoseRecord -> return Pair(
+            record.level.inMilligramsPerDeciliter.toString(), record.time
+        )
 
-        is BloodPressureRecord ->
-            return Pair(
-                "${record.diastolic.inMillimetersOfMercury}/${record.systolic.inMillimetersOfMercury}",
-                record.time
-            )
+        is BloodPressureRecord -> return Pair(
+            "${record.diastolic.inMillimetersOfMercury}/${record.systolic.inMillimetersOfMercury}",
+            record.time
+        )
 
-        is BodyFatRecord ->
-            return Pair(record.percentage.toString(), record.time)
+        is BodyFatRecord -> return Pair(record.percentage.toString(), record.time)
 
-        is BodyTemperatureRecord ->
-            return Pair(record.temperature.inCelsius.toString(), record.time)
+        is BodyTemperatureRecord -> return Pair(
+            record.temperature.inCelsius.toString(), record.time
+        )
 
-        is BodyWaterMassRecord ->
-            return Pair(record.mass.inGrams.toString(), record.time)
+        is BodyWaterMassRecord -> return Pair(record.mass.inGrams.toString(), record.time)
 
-        is BoneMassRecord ->
-            return Pair(record.mass.inGrams.toString(), record.time)
+        is BoneMassRecord -> return Pair(record.mass.inGrams.toString(), record.time)
 
-        is CervicalMucusRecord -> {}
-        //TODO: this cannot be a default record format (it is categories instead)
-        is DistanceRecord ->
-            return Pair(record.distance.inMeters.toString(), record.endTime)
+        is DistanceRecord -> return Pair(record.distance.inMeters.toString(), record.endTime)
 
-        is ElevationGainedRecord ->
-            return Pair(record.elevation.inMeters.toString(), record.endTime)
+        is ElevationGainedRecord -> return Pair(
+            record.elevation.inMeters.toString(), record.endTime
+        )
 
-        is FloorsClimbedRecord ->
-            return Pair(record.floors.toString(), record.endTime)
+        is FloorsClimbedRecord -> return Pair(record.floors.toString(), record.endTime)
 
-        is HeartRateVariabilityRmssdRecord ->
-            return Pair(record.heartRateVariabilityMillis.toString(), record.time)
+        is HeartRateVariabilityRmssdRecord -> return Pair(
+            record.heartRateVariabilityMillis.toString(), record.time
+        )
 
-        is HeightRecord ->
-            return Pair((record.height.inMeters / 100).toString(), record.time)
+        is HeightRecord -> return Pair((record.height.inMeters / 100).toString(), record.time)
 
-        is HydrationRecord ->
-            return Pair(record.volume.inMilliliters.toString(), record.endTime)
+        is HydrationRecord -> return Pair(record.volume.inMilliliters.toString(), record.endTime)
 
-        is IntermenstrualBleedingRecord -> {}
-        //TODO: this cannot be a default record format (it is categories instead)
-        is LeanBodyMassRecord ->
-            return Pair(record.mass.inGrams.toString(), record.time)
+        is LeanBodyMassRecord -> return Pair(record.mass.inGrams.toString(), record.time)
 
-        is MenstruationPeriodRecord ->
-            return Pair(
-                Duration.between(record.startTime, record.endTime).toDays().toString(),
-                record.endTime
-            )
+        is MenstruationPeriodRecord -> return Pair(
+            Duration.between(record.startTime, record.endTime).toDays().toString(), record.endTime
+        )
 
-        is MenstruationFlowRecord -> {}
-        //TODO: this cannot be a default record format (it is categories instead)
-        is OvulationTestRecord -> {}
-        //TODO: this cannot be a default record format (it is categories instead)
-        is OxygenSaturationRecord ->
-            return Pair(record.percentage.toString(), record.time)
+        is OxygenSaturationRecord -> return Pair(record.percentage.toString(), record.time)
 
         is PlannedExerciseSessionRecord -> {}
         //TODO: this cannot be a default record format (this needs to be custom implemented)
-        is PowerRecord ->
-            return Pair(record.samples.last().power.inWatts.toString(), record.endTime)
+        is PowerRecord -> return Pair(
+            record.samples.last().power.inWatts.toString(), record.endTime
+        )
 
-        is RespiratoryRateRecord ->
-            return Pair(record.rate.toString(), record.time)
+        is RespiratoryRateRecord -> return Pair(record.rate.toString(), record.time)
 
-        is RestingHeartRateRecord ->
-            return Pair(record.beatsPerMinute.toString(), record.time)
+        is RestingHeartRateRecord -> return Pair(record.beatsPerMinute.toString(), record.time)
 
-        is SexualActivityRecord -> {}
-        //TODO: this cannot be a default record format (it is categories instead)
         is SleepSessionRecord -> {}
         //TODO: this cannot be a default record format (this needs to be custom implemented)
-        is SpeedRecord ->
-            return Pair(record.samples.last().speed.inMetersPerSecond.toString(), record.endTime)
+        is SpeedRecord -> return Pair(
+            record.samples.last().speed.inMetersPerSecond.toString(), record.endTime
+        )
 
-        is TotalCaloriesBurnedRecord ->
-            return Pair(record.energy.inKilocalories.toString(), record.endTime)
+        is TotalCaloriesBurnedRecord -> return Pair(
+            record.energy.inKilocalories.toString(), record.endTime
+        )
 
-        is Vo2MaxRecord ->
-            return Pair(record.vo2MillilitersPerMinuteKilogram.toString(), record.time)
+        is Vo2MaxRecord -> return Pair(
+            record.vo2MillilitersPerMinuteKilogram.toString(), record.time
+        )
 
-        is WheelchairPushesRecord ->
-            return Pair(record.count.toString(), record.endTime)
+        is WheelchairPushesRecord -> return Pair(record.count.toString(), record.endTime)
 
-        is WeightRecord ->
-            return Pair(record.weight.inKilograms.toString(), record.time)
+        is WeightRecord -> return Pair(record.weight.inKilograms.toString(), record.time)
 
         is SkinTemperatureRecord -> {}
         //TODO: this cannot be a default record format (this needs to be custom implemented probably)
@@ -329,7 +376,9 @@ fun inHealthScope(content: suspend () -> Unit) {
 }
 
 @Composable
-fun <T : Any> BasicRecordViewData(appDatabase: AppDatabase, name: String, unit: String, clazz: KClass<T>) {
+fun <T : Any> BasicRecordViewData(
+    appDatabase: AppDatabase, name: String, unit: String, clazz: KClass<T>
+) {
     var value by remember { mutableStateOf<String?>(null) }
     var lastTime by remember { mutableStateOf<Instant?>(null) }
     LaunchedEffect(Unit) {
@@ -339,8 +388,7 @@ fun <T : Any> BasicRecordViewData(appDatabase: AppDatabase, name: String, unit: 
             )
             if (records.isEmpty()) return@inHealthScope
             val record = gson.fromJson(
-                records.last().originalData,
-                clazz.java
+                records.last().originalData, clazz.java
             ) as Record
             val r = getValueAndTime(record)
             value = r.first
@@ -348,6 +396,74 @@ fun <T : Any> BasicRecordViewData(appDatabase: AppDatabase, name: String, unit: 
         }
     }
     BasicRecordView(name, unit, value, lastTime)
+}
+
+@Composable
+fun <T : Any> CategoryRecordViewData(appDatabase: AppDatabase, name: String, clazz: KClass<T>) {
+    var value by remember { mutableStateOf<String?>(null) }
+    var lastTime by remember { mutableStateOf<Instant?>(null) }
+    LaunchedEffect(Unit) {
+        inHealthScope {
+            val records = appDatabase.recordDataDao().getAllOfClass(
+                clazz
+            )
+            if (records.isEmpty()) return@inHealthScope
+            val record = gson.fromJson(
+                records.last().originalData, clazz.java
+            ) as Record
+            val r = getCategoryIntAndTime(record)
+            value = r.first
+            lastTime = r.second
+        }
+    }
+    CategoryRecordView(name, value, lastTime)
+}
+
+@Composable
+fun CervicalMucusViewData(appDatabase: AppDatabase) =
+    CategoryRecordViewData(appDatabase, "Cervical Mucus", CervicalMucusRecord::class)
+
+@Composable
+fun OvulationTestViewData(appDatabase: AppDatabase) =
+    CategoryRecordViewData(appDatabase, "Ovulation Test", OvulationTestRecord::class)
+
+@Composable
+fun SexualActivityViewData(appDatabase: AppDatabase) =
+    CategoryRecordViewData(appDatabase, "Sexual Activity", SexualActivityRecord::class)
+
+@Composable
+fun MenstruationFlowViewData(appDatabase: AppDatabase) =
+    CategoryRecordViewData(appDatabase, "Menstruation Flow", MenstruationFlowRecord::class)
+
+@Composable
+fun IntermenstrualBleedingViewData(appDatabase: AppDatabase) =
+    CategoryRecordViewData(appDatabase, "Intermenstrual Bleeding", IntermenstrualBleedingRecord::class)
+
+@SuppressLint("RestrictedApi")
+fun getCategoryIntAndTime(record: Record): Pair<String?, Instant?> {
+    when (record) {
+        is CervicalMucusRecord -> return Pair(
+            CervicalMucusRecord.APPEARANCE_INT_TO_STRING_MAP[record.appearance] + " and" + CervicalMucusRecord.SENSATION_INT_TO_STRING_MAP[record.sensation],
+            record.time
+        )
+
+        is IntermenstrualBleedingRecord -> return Pair("", record.time)
+
+        is MenstruationFlowRecord -> return Pair(
+            MenstruationFlowRecord.FLOW_TYPE_INT_TO_STRING_MAP[record.flow] + " flow", record.time
+        )
+
+        is OvulationTestRecord -> return Pair(
+            OvulationTestRecord.RESULT_INT_TO_STRING_MAP[record.result], record.time
+        )
+
+        is SexualActivityRecord -> return Pair(
+            SexualActivityRecord.PROTECTION_USED_INT_TO_STRING_MAP[record.protectionUsed],
+            record.time
+        )
+    }
+
+    return Pair(null, null)
 }
 
 @Composable
@@ -359,7 +475,9 @@ fun NutritionGenericView(name: String, quantity: Double, unit: String, lastTime:
 }
 
 @Composable
-fun NutritionGenericViewData(hc: AppDatabase, name: String, unit: String, getQuantity: (NutritionRecord) -> Double) {
+fun NutritionGenericViewData(
+    hc: AppDatabase, name: String, unit: String, getQuantity: (NutritionRecord) -> Double
+) {
     var total by remember { mutableDoubleStateOf(0.0) }
     LaunchedEffect(Unit) {
         inHealthScope {
@@ -368,8 +486,10 @@ fun NutritionGenericViewData(hc: AppDatabase, name: String, unit: String, getQua
             records.forEach {
                 val record = gson.fromJson(it.originalData, NutritionRecord::class.java)
                 println(record)
-                if(record.endTime.isAfter(Instant.now().minusSeconds(60*60*24*1)))
-                    temp += getQuantity(record)
+                if (record.endTime.isAfter(
+                        Instant.now().minusSeconds(60 * 60 * 24 * 1)
+                    )
+                ) temp += getQuantity(record)
             }
             total = temp
         }

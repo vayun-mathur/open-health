@@ -148,6 +148,11 @@ fun BrowseCategoryScreen(navController: NavHostController, appDatabase: AppDatab
                     RecordCategory.CYCLE_TRACKING -> {
                         BasalBodyTemperatureViewData(appDatabase)
                         MenstruationPeriodViewData(appDatabase)
+                        MenstruationFlowViewData(appDatabase)
+                        SexualActivityViewData(appDatabase)
+                        OvulationTestViewData(appDatabase)
+                        IntermenstrualBleedingViewData(appDatabase)
+                        CervicalMucusViewData(appDatabase)
                     }
                     RecordCategory.NUTRITION -> {
                         HydrationViewData(appDatabase)
